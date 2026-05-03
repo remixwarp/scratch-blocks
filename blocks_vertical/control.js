@@ -595,7 +595,7 @@ Blockly.Blocks['control_continue'] = {
         this.jsonInit({
             "message0": Blockly.Msg.CONTROL_CONTINUE,
             "category": Blockly.Categories.control,
-            "extensions": ["colours_control", "shape_statement", "shape_end"]
+            "extensions": ["colours_control", "shape_statement"]
         });
     }
 };
