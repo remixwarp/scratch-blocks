@@ -334,11 +334,11 @@ Blockly.ScratchMsgs.locales["zh-cn"] =
     "CONTROL_INCRCOUNTER": "计数器加一",
     "CONTROL_CLEARCOUNTER": "计数器归零",
     "CONTROL_ALLATONCE": "所有脚本",
-    "CONTROL_SWITCH": "切换 %1",
+    "CONTROL_SWITCH": "对于 %1",
     "CONTROL_CASE": "情况 %1",
     "CONTROL_CASE_FALLTHROUGH": "情况 %1",
     "CONTROL_DEFAULT": "默认",
-    "CONTROL_BREAK": "中断",
+    "CONTROL_BREAK": "终止",
     "CONTROL_CONTINUE": "继续",
     "DATA_SETVARIABLETO": "将 %1 设为 %2",
     "DATA_CHANGEVARIABLEBY": "将 %1 增加 %2",
@@ -478,7 +478,7 @@ Blockly.ScratchMsgs.locales["zh-cn"] =
     "OPERATORS_LENGTH": "%1 的字符数",
     "OPERATORS_CONTAINS": "%1 包含 %2 ?",
     "OPERATORS_MOD": "%1 除以 %2 的余数",
-    "OPERATORS_PI": "圆周率",
+    "OPERATORS_PI": "π",
     "OPERATORS_NEWLINE": "换行",
     "OPERATORS_ROUND": "四舍五入 %1",
     "OPERATORS_MATHOP": "%2 的 %1",
@@ -611,5 +611,8 @@ Blockly.ScratchMsgs.locales["zh-cn"] =
     "NEW_BROADCAST_MESSAGE": "新消息",
     "NEW_BROADCAST_MESSAGE_TITLE": "消息名：",
     "BROADCAST_MODAL_TITLE": "新消息",
-    "DEFAULT_BROADCAST_MESSAGE_NAME": "消息1"
+    "DEFAULT_BROADCAST_MESSAGE_NAME": "消息1",
+    "UNSUPPORT_TW_1": "以下积木不支持 TurboWarp",
+    "UNSUPPORT_TW_2": "我们强烈建议不去使用它们",
+    "UNSUPPORT_TW_3": "它们仅用于与 MistWarp 兼容。"
 };
