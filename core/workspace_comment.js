@@ -125,7 +125,7 @@ Blockly.WorkspaceComment = function(workspace, content, height, width, minimized
  * one additional character, the ellipsis).
  * @private
  */
-Blockly.WorkspaceComment.MAX_LABEL_LENGTH = 12;
+Blockly.WorkspaceComment.MAX_LABEL_LENGTH = 15;
 
 /**
  * Dispose of this comment.
@@ -308,11 +308,30 @@ Blockly.WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
  * @package
  */
 Blockly.WorkspaceComment.prototype.getLabelText = function() {
-  if (this.content_.length > Blockly.WorkspaceComment.MAX_LABEL_LENGTH) {
-    if (this.RTL) {
-      return '\u2026' + this.content_.slice(0, Blockly.WorkspaceComment.MAX_LABEL_LENGTH);
+  var getCharByteLength = function(char) {
+    return (/[\u4e00-\u9fa5]/.test(char)) ? 2 : 1;
+  };
+
+  var byteLength = 0;
+  for (var i = 0; i < this.content_.length; i++) {
+    byteLength += getCharByteLength(this.content_[i]);
+  }
+
+  if (byteLength > Blockly.WorkspaceComment.MAX_LABEL_LENGTH) {
+    var result = '';
+    var currentByteLength = 0;
+    for (var i = 0; i < this.content_.length; i++) {
+      var charByteLength = getCharByteLength(this.content_[i]);
+      if (currentByteLength + charByteLength > Blockly.WorkspaceComment.MAX_LABEL_LENGTH) {
+        break;
+      }
+      result += this.content_[i];
+      currentByteLength += charByteLength;
     }
-    return this.content_.slice(0, Blockly.WorkspaceComment.MAX_LABEL_LENGTH) + '\u2026';
+    if (this.RTL) {
+      return '\u2026' + result;
+    }
+    return result + '\u2026';
   } else {
     return this.content_;
   }
