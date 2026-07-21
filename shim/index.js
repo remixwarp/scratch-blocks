@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Webpack shim module
  *
  * Uses webpack imports-loader and exports-loader to provide the horizontal and

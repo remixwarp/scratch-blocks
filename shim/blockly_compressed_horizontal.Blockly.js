@@ -1,1 +1,1 @@
-module.exports = require('./blockly_compressed_horizontal').Blockly;
+﻿module.exports = require('./blockly_compressed_horizontal').Blockly;

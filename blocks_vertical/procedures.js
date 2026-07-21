@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * Visual Blocks Editor
  *
@@ -744,9 +744,9 @@ Blockly.ScratchBlocks.ProcedureUtils.setCustomColor = function(color) {
     const rgb = c.hexToRgb(color);
 
     this.setColour(color,
-      c.rgbArrayToHex(c.darken(rgb, 0.1)),
-      c.rgbArrayToHex(c.darken(rgb, 0.2)),
-      c.rgbArrayToHex(c.darken(rgb, 0.3))
+        c.rgbArrayToHex(c.darken(rgb, 0.1)),
+        c.rgbArrayToHex(c.darken(rgb, 0.2)),
+        c.rgbArrayToHex(c.darken(rgb, 0.3))
     );
   } else {
     // Revert to default "more" colors
@@ -773,9 +773,9 @@ Blockly.ScratchBlocks.ProcedureUtils.setCustomColor = function(color) {
           const rgb = c.hexToRgb(color);
 
           block.setColour(color,
-            c.rgbArrayToHex(c.darken(rgb, 0.1)),
-            c.rgbArrayToHex(c.darken(rgb, 0.2)),
-            c.rgbArrayToHex(c.darken(rgb, 0.3))
+              c.rgbArrayToHex(c.darken(rgb, 0.1)),
+              c.rgbArrayToHex(c.darken(rgb, 0.2)),
+              c.rgbArrayToHex(c.darken(rgb, 0.3))
           );
         } else {
           var moreColors = Blockly.Colours.more;

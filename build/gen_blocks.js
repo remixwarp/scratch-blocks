@@ -1,1 +1,1 @@
-goog.provide('Blockly.Blocks');
+﻿goog.provide('Blockly.Blocks');

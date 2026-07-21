@@ -1,4 +1,4 @@
-/* eslint-env node */
+﻿/* eslint-env node */
 
 // There are a lot of different ways that people can install python, and there is no
 // universal name that they use for the actual executable. We can already assume

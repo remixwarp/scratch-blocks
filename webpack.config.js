@@ -1,4 +1,4 @@
-// patch 'fs' to fix EMFILE errors, for example on WSL
+﻿// patch 'fs' to fix EMFILE errors, for example on WSL
 var realFs = require('fs');
 var gracefulFs = require('graceful-fs');
 gracefulFs.gracefulify(realFs);
