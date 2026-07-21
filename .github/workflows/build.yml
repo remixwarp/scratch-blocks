@@ -1,49 +1,117 @@
-name: Build and Push
+name: CI
 
 on:
   push:
-    branches:
-      - develop-builds
+  pull_request:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run test:lint
+      - run: npm run translate
+      - run: npm run prepublish
+      # Save built files as artifact
+      - name: Upload built files
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-files
+          path: |
+            dist
+            blockly_uncompressed_vertical.js
+            blockly_uncompressed_horizontal.js
+            blockly_compressed_vertical.js
+            blockly_compressed_horizontal.js
+            blocks_compressed.js
+            blocks_compressed_horizontal.js
+            blocks_compressed_vertical.js
+            msg/js/*.js
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/develop'
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4.1.1
+    - name: Checkout repo (with push access)
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4.0.2
-        with:
-          node-version: '21'
-          cache: npm
+    - name: Download dist
+      uses: actions/download-artifact@v4
+      with:
+        name: built-files
+        path: .
 
-      - name: Set up Python
-        uses: actions/setup-python@v5.1.0
-        with:
-          python-version: '3.12.1'
+    - name: Deploy to develop-builds
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Set up Java
-        uses: actions/setup-java@v4.2.1
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          java-package: 'jre'
+        # Backup built files
+        rm -rf /tmp/build
+        mkdir -p /tmp/build
+        cp -r dist /tmp/build/ || true
+        cp -f blockly_uncompressed_*.js /tmp/build/ 2>/dev/null || true
+        cp -f blockly_compressed_*.js /tmp/build/ 2>/dev/null || true
+        cp -f blocks_compressed*.js /tmp/build/ 2>/dev/null || true
+        mkdir -p /tmp/build/msg/js
+        cp -r msg/js/* /tmp/build/msg/js/ 2>/dev/null || true
 
-      - name: Install Dependencies and Build
-        run: npm ci
+        # Clean working directory to avoid checkout conflicts
+        git reset --hard HEAD
+        git clean -fd
 
-      - name: Commit and Push Build
-        run: |
-          git config --local user.name "GitHub Action"
-          git config --local user.email "action@github.com"
-          git add .
-          git commit -m "Update Builds"
-          git push origin develop-builds
+        # Fetch all branches
+        git fetch origin
+
+        # Checkout or create develop-builds based on develop
+        if git show-ref --verify --quiet refs/remotes/origin/develop-builds; then
+          git checkout develop-builds
+          git pull origin develop-builds
+        else
+          git checkout -b develop-builds origin/develop
+        fi
+
+        # Sync code with develop - automatically resolve conflicts in favor of develop
+        git merge -X theirs origin/develop --no-edit
+
+        # Replace built files
+        rm -rf dist
+        mkdir dist
+        cp -r /tmp/build/dist/* dist/ || true
+        cp -f /tmp/build/blockly_uncompressed_*.js . 2>/dev/null || true
+        cp -f /tmp/build/blockly_compressed_*.js . 2>/dev/null || true
+        cp -f /tmp/build/blocks_compressed*.js . 2>/dev/null || true
+        mkdir -p msg/js
+        cp -r /tmp/build/msg/js/* msg/js/ 2>/dev/null || true
+
+        # Force add all built files (ignore .gitignore)
+        git add -f dist
+        git add -f blockly_uncompressed_*.js
+        git add -f blockly_compressed_*.js
+        git add -f blocks_compressed*.js
+        git add -f msg/js/*.js
+
+        # Commit if changed
+        git commit -m "chore: update built files from develop" || echo "No changes"
+
+        # Push
+        git push origin develop-builds
