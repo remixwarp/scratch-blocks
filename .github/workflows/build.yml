@@ -19,10 +19,15 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
       - run: npm ci
       - run: npm run test:lint
       - run: npm run translate
-      - run: npm run prepublish
+      - run: npm run build
       # Save built files as artifact
       - name: Upload built files
         uses: actions/upload-artifact@v4
