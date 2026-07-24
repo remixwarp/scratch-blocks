@@ -570,7 +570,7 @@ Blockly.BlockSvg.prototype.updateColour = function() {
         input.outlinePath.setAttribute('fill', this.getColourSecondary());
       }else{
         input.outlinePath.setAttribute('fill', this.getColourTertiary());
-      } 
+      }
     }
   }
 

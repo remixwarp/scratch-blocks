@@ -131,7 +131,7 @@ Blockly.WorkspaceComment.MAX_LABEL_LENGTH = 15;
  * Dispose of this comment.
  * @package
  */
-Blockly.WorkspaceComment.prototype.dispose = function () {
+Blockly.WorkspaceComment.prototype.dispose = function() {
   if (!this.workspace) {
     // The comment has already been deleted.
     return;
@@ -154,7 +154,7 @@ Blockly.WorkspaceComment.prototype.dispose = function () {
  * @return {number} comment height.
  * @package
  */
-Blockly.WorkspaceComment.prototype.getHeight = function () {
+Blockly.WorkspaceComment.prototype.getHeight = function() {
   return this.height_;
 };
 
@@ -172,7 +172,7 @@ Blockly.WorkspaceComment.prototype.setHeight = function (height) {
  * @return {number} comment width.
  * @package
  */
-Blockly.WorkspaceComment.prototype.getWidth = function () {
+Blockly.WorkspaceComment.prototype.getWidth = function() {
   return this.width_;
 };
 
@@ -190,7 +190,7 @@ Blockly.WorkspaceComment.prototype.setWidth = function (width) {
  * @return {{height: number, width: number}} The height and width of this comment;
  *     these numbers do not change as the workspace scales.
  */
-Blockly.WorkspaceComment.prototype.getHeightWidth = function () {
+Blockly.WorkspaceComment.prototype.getHeightWidth = function() {
   return { height: this.height_, width: this.width_ };
 };
 
@@ -200,7 +200,7 @@ Blockly.WorkspaceComment.prototype.getHeightWidth = function () {
  *     valid if the comment is currently being dragged.
  * @package
  */
-Blockly.WorkspaceComment.prototype.getXY = function () {
+Blockly.WorkspaceComment.prototype.getXY = function() {
   return this.xy_.clone();
 };
 
@@ -222,7 +222,7 @@ Blockly.WorkspaceComment.prototype.moveBy = function (dx, dy) {
  * @return {boolean} True if deletable.
  * @package
  */
-Blockly.WorkspaceComment.prototype.isDeletable = function () {
+Blockly.WorkspaceComment.prototype.isDeletable = function() {
   return this.deletable_ &&
     !(this.workspace && this.workspace.options.readOnly);
 };
@@ -241,7 +241,7 @@ Blockly.WorkspaceComment.prototype.setDeletable = function (deletable) {
  * @return {boolean} True if movable.
  * @package
  */
-Blockly.WorkspaceComment.prototype.isMovable = function () {
+Blockly.WorkspaceComment.prototype.isMovable = function() {
   return this.movable_ &&
     !(this.workspace && this.workspace.options.readOnly);
 };
@@ -260,7 +260,7 @@ Blockly.WorkspaceComment.prototype.setMovable = function (movable) {
  * @return {string} Comment text.
  * @package
  */
-Blockly.WorkspaceComment.prototype.getText = function () {
+Blockly.WorkspaceComment.prototype.getText = function() {
   return this.content_;
 };
 
@@ -272,7 +272,7 @@ Blockly.WorkspaceComment.prototype.getText = function () {
 Blockly.WorkspaceComment.prototype.setText = function (text) {
   if (this.content_ != text) {
     Blockly.Events.fire(new Blockly.Events.CommentChange(
-      this, { text: this.content_ }, { text: text }));
+        this, { text: this.content_ }, { text: text }));
     this.content_ = text;
   }
 };
@@ -282,7 +282,7 @@ Blockly.WorkspaceComment.prototype.setText = function (text) {
  * @return {boolean} True if minimized
  * @package
  */
-Blockly.WorkspaceComment.prototype.isMinimized = function () {
+Blockly.WorkspaceComment.prototype.isMinimized = function() {
   return this.isMinimized_;
 };
 
@@ -307,7 +307,7 @@ Blockly.WorkspaceComment.prototype.toXmlWithXY = function (opt_noId) {
  * @return {string} The truncated comment text
  * @package
  */
-Blockly.WorkspaceComment.prototype.getLabelText = function () {
+Blockly.WorkspaceComment.prototype.getLabelText = function() {
   var getCharByteLength = function (char) {
     return (/[\u4e00-\u9fa5]/.test(char)) ? 2 : 1;
   };
@@ -386,7 +386,7 @@ Blockly.WorkspaceComment.fromXml = function (xmlComment, workspace) {
   var info = Blockly.WorkspaceComment.parseAttributes(xmlComment);
 
   var comment = new Blockly.WorkspaceComment(
-    workspace, info.content, info.h, info.w, info.minimized, info.id);
+      workspace, info.content, info.h, info.w, info.minimized, info.id);
 
   if (!isNaN(info.x) && !isNaN(info.y)) {
     comment.moveBy(info.x, info.y);
