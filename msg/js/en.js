@@ -1,4 +1,4 @@
-﻿// This file was automatically generated.  Do not modify.
+// This file was automatically generated.  Do not modify.
 
 'use strict';
 
@@ -196,6 +196,16 @@ Blockly.Msg["OPERATORS_MATHOP_LN"] = "ln";
 Blockly.Msg["OPERATORS_MATHOP_LOG"] = "log";
 Blockly.Msg["OPERATORS_MATHOP_EEXP"] = "e ^";
 Blockly.Msg["OPERATORS_MATHOP_10EXP"] = "10 ^";
+Blockly.Msg["OPERATORS_JOIN_LABEL"] = "join";
+Blockly.Msg["OPERATORS_ADD_INPUT"] = "Add input";
+Blockly.Msg["OPERATORS_REMOVE_INPUT"] = "Remove input";
+Blockly.Msg["OPERATORS_CLAMP"] = "clamp %1 between %2 and %3";
+Blockly.Msg["OPERATORS_MIN"] = "min";
+Blockly.Msg["OPERATORS_MAX"] = "max";
+Blockly.Msg["OPERATORS_AND_SEPARATOR"] = "and";
+Blockly.Msg["OPERATORS_OR_SEPARATOR"] = "or";
+Blockly.Msg["OPERATORS_MOD_SEPARATOR"] = "mod";
+Blockly.Msg["OPERATORS_JS_LABEL"] = "js";
 Blockly.Msg["PROCEDURES_DEFINITION"] = "define %1";
 Blockly.Msg["PROCEDURES_RETURN"] = "return %1";
 Blockly.Msg["PROCEDURES_TO_REPORTER"] = "Change To Reporter";
@@ -297,6 +307,12 @@ Blockly.Msg["DELETE_BLOCK"] = "Delete Block";
 Blockly.Msg["DELETE_X_BLOCKS"] = "Delete %1 Blocks";
 Blockly.Msg["DELETE_ALL_BLOCKS"] = "Delete all %1 blocks?";
 Blockly.Msg["CLEAN_UP"] = "Clean up Blocks";
+Blockly.Msg["ADD_FRAME"] = "Add Frame";
+Blockly.Msg["RENAME_FRAME"] = "Rename Frame";
+Blockly.Msg["DELETE_FRAME"] = "Delete Frame";
+Blockly.Msg["COLLAPSE_FRAME"] = "Collapse Frame";
+Blockly.Msg["EXPAND_FRAME"] = "Expand Frame";
+Blockly.Msg["FRAME_DEFAULT_TITLE"] = "Frame";
 Blockly.Msg["HELP"] = "Help";
 Blockly.Msg["UNDO"] = "Undo";
 Blockly.Msg["REDO"] = "Redo";
