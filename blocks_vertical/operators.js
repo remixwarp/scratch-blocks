@@ -292,11 +292,13 @@ Blockly.Blocks['operator_divide'] = Blockly.ScratchBlocks.defineExtendableOperat
 });
 
 Blockly.Blocks['operator_min'] = Blockly.ScratchBlocks.defineExtendableOperator({
-  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MIN || 'min'; }, shadow: 'math_number', output: 'output_number'
+  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MIN || 'min'; },
+  shadow: 'math_number', output: 'output_number'
 });
 
 Blockly.Blocks['operator_max'] = Blockly.ScratchBlocks.defineExtendableOperator({
-  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MAX || 'max'; }, shadow: 'math_number', output: 'output_number'
+  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MAX || 'max'; },
+  shadow: 'math_number', output: 'output_number'
 });
 
 Blockly.Blocks['patching_jsreporter'] = Blockly.ScratchBlocks.defineExtendableOperator({
@@ -619,7 +621,9 @@ Blockly.Blocks['operator_trim'] = {
 };
 
 Blockly.Blocks['operator_mod'] = Blockly.ScratchBlocks.defineExtendableOperator({
-  prefix: 'NUM', separator: function() { return Blockly.Msg.OPERATORS_MOD_SEPARATOR || 'mod'; }, shadow: 'math_number', output: 'output_number'
+  prefix: 'NUM',
+  separator: function() { return Blockly.Msg.OPERATORS_MOD_SEPARATOR || 'mod'; },
+  shadow: 'math_number', output: 'output_number'
 });
 
 Blockly.Blocks["operator_pi"] = {
