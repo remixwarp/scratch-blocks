@@ -111,7 +111,7 @@
     "MOTION_POINTINDIRECTION": "面向 %1 方向",
     "MOTION_POINTTOWARDS": "面向 %1",
     "MOTION_POINTTOWARDS_XY": "面向 x: %1 y: %2",
-    "MOTION_POINTTOWARDS_XYFROM": "面向 x: %1 y: %2 从 x: %3 y: %4",
+    "MOTION_POINTTOWARDS_XYFROM": "从 x: %3 y: %4 面向 x: %1 y: %2",
     "MOTION_POINTTOWARDS_POINTER": "鼠标指针",
     "MOTION_POINTTOWARDS_RANDOM": "随机方向",
     "MOTION_GOTO": "移到 %1",
