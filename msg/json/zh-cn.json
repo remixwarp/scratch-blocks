@@ -279,7 +279,7 @@
     "ASSETS_PROPERTY_FORMAT": "格式",
     "ASSETS_PROPERTY_FOLDER": "文件夹",
     "ASSETS_BYTE": "素材 %2 的第 %1 字节",
-    "ASSETS_CHECK": "素材 %1 %2？",
+    "ASSETS_CHECK": "素材 %1 %2?",
     "ASSETS_STATE_EXISTS": "存在",
     "ASSETS_STATE_LOADED": "已加载",
     "ASSETS_SET": "将素材 %1 设为 %2 作为 %3",
