@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * Visual Blocks Editor
  *
@@ -66,6 +66,40 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
     '<block type="motion_pointtowards" id="motion_pointtowards">' +
       '<value name="TOWARDS">' +
         '<shadow type="motion_pointtowards_menu">' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="motion_pointtowards_xy" id="motion_pointtowards_xy">' +
+      '<value name="X">' +
+        '<shadow id="pointx" type="math_number">' +
+          '<field name="NUM">0</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y">' +
+        '<shadow id="pointy" type="math_number">' +
+          '<field name="NUM">0</field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="motion_pointtowards_xyfrom" id="motion_pointtowards_xyfrom">' +
+      '<value name="X">' +
+        '<shadow id="pointx" type="math_number">' +
+          '<field name="NUM">0</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y">' +
+        '<shadow id="pointy" type="math_number">' +
+          '<field name="NUM">0</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="FROMX">' +
+        '<shadow id="pointx" type="math_number">' +
+          '<field name="NUM">0</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="FROMY">' +
+        '<shadow id="pointy" type="math_number">' +
+          '<field name="NUM">0</field>' +
         '</shadow>' +
       '</value>' +
     '</block>' +

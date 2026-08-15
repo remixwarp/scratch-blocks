@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @license
  * Visual Blocks Editor
  *
@@ -637,6 +637,20 @@ Blockly.Blocks['control_break'] = {
       "message0": Blockly.Msg.CONTROL_BREAK,
       "category": Blockly.Categories.control,
       "extensions": ["colours_control", "shape_end"]
+    });
+  }
+};
+
+Blockly.Blocks['control_continue'] = {
+  /**
+   * Block for continue statement.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.CONTROL_CONTINUE,
+      "category": Blockly.Categories.control,
+      "extensions": ["colours_control", "shape_statement", "shape_end"]
     });
   }
 };
