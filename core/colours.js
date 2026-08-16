@@ -73,6 +73,12 @@ Blockly.Colours = {
     "tertiary": "#389438",
     "quaternary": "#389438"
   },
+  "strings": {
+    "primary": "#00A6A6",
+    "secondary": "#009292",
+    "tertiary": "#007A7A",
+    "quaternary": "#007A7A"
+  },
   "data": {
     "primary": "#FF8C1A",
     "secondary": "#FF8000",
@@ -86,6 +92,12 @@ Blockly.Colours = {
     "secondary": "#FF5500",
     "tertiary": "#E64D00",
     "quaternary": "#E64D00"
+  },
+  "assets": {
+    "primary": "#6E7A8A",
+    "secondary": "#5E6977",
+    "tertiary": "#4F5866",
+    "quaternary": "#4F5866"
   },
   "more": {
     "primary": "#FF6680",

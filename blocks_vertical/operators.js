@@ -337,7 +337,7 @@ Blockly.Blocks['operator_join'] = {
         }
       ],
       "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_string"]
+      "extensions": ["colours_strings", "output_string"]
     });
   }
 };
@@ -361,7 +361,7 @@ Blockly.Blocks['operator_letter_of'] = {
         }
       ],
       "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_string"]
+      "extensions": ["colours_strings", "output_string"]
     });
   }
 };
@@ -381,7 +381,7 @@ Blockly.Blocks['operator_length'] = {
         }
       ],
       "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_string"]
+      "extensions": ["colours_strings", "output_string"]
     });
   }
 };
@@ -405,7 +405,97 @@ Blockly.Blocks['operator_contains'] = {
         }
       ],
       "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_boolean"]
+      "extensions": ["colours_strings", "output_boolean"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_letters_of'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_LETTERSOF,
+      "args0": [
+        {"type": "input_value", "name": "LETTER1"},
+        {"type": "input_value", "name": "LETTER2"},
+        {"type": "input_value", "name": "STRING"}
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_string"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_index_of'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_INDEXOF,
+      "args0": [
+        {"type": "input_value", "name": "SUBSTRING"},
+        {"type": "input_value", "name": "STRING"}
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_replace'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_REPLACE,
+      "args0": [
+        {"type": "input_value", "name": "SUBSTRING"},
+        {"type": "input_value", "name": "STRING"},
+        {"type": "input_value", "name": "REPLACE"}
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_string"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_repeat'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_REPEAT,
+      "args0": [
+        {"type": "input_value", "name": "STRING"},
+        {"type": "input_value", "name": "REPEAT"}
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_string"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_change_case'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_CHANGECASE,
+      "args0": [
+        {"type": "input_value", "name": "STRING"},
+        {
+          "type": "field_dropdown",
+          "name": "CASE",
+          "options": [
+            [Blockly.Msg.OPERATORS_LOWERCASE, 'lowercase'],
+            [Blockly.Msg.OPERATORS_UPPERCASE, 'uppercase']
+          ]
+        }
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_string"]
+    });
+  }
+};
+
+Blockly.Blocks['operator_trim'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_TRIM,
+      "args0": [{"type": "input_value", "name": "STRING"}],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_strings", "output_string"]
     });
   }
 };
