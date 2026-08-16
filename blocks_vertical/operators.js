@@ -27,103 +27,257 @@ goog.require('Blockly.Colours');
 goog.require('Blockly.constants');
 goog.require('Blockly.ScratchBlocks.VerticalExtensions');
 
+goog.require('goog.math.Coordinate');
+goog.require('goog.math.Size');
+goog.require('goog.object');
+goog.require('goog.style');
 
-Blockly.Blocks['operator_add'] = {
-  /**
-   * Block for adding two numbers.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.jsonInit({
-      "message0": Blockly.Msg.OPERATORS_ADD,
-      "args0": [
-        {
-          "type": "input_value",
-          "name": "NUM1"
-        },
-        {
-          "type": "input_value",
-          "name": "NUM2"
+Blockly.ScratchBlocks.OperatorUtils = {};
+Blockly.ScratchBlocks.OperatorUtils.arrowsHidden = false;
+Blockly.ScratchBlocks.OperatorUtils.setArrowsHidden = function(hidden) {
+  Blockly.ScratchBlocks.OperatorUtils.arrowsHidden = !!hidden;
+  var db = Blockly.Workspace.WorkspaceDB_;
+  for (var id in db) {
+    var ws = db[id];
+    if (ws && ws.getAllBlocks) {
+      var blocks = ws.getAllBlocks(false);
+      for (var i = 0; i < blocks.length; i++) {
+        var block = blocks[i];
+        if (block.inputPrefix_ && block.updateShape_) {
+          block.updateShape_();
         }
-      ],
-      "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_number"]
-    });
+      }
+    }
   }
 };
 
-Blockly.Blocks['operator_subtract'] = {
-  /**
-   * Block for subtracting two numbers.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.jsonInit({
-      "message0": Blockly.Msg.OPERATORS_SUBTRACT,
-      "args0": [
-        {
-          "type": "input_value",
-          "name": "NUM1"
-        },
-        {
-          "type": "input_value",
-          "name": "NUM2"
-        }
-      ],
-      "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_number"]
-    });
+Blockly.FieldOperatorButton = function(icon, handlerName) {
+  Blockly.FieldOperatorButton.superClass_.constructor.call(this, icon, 12, 18, handlerName === 'plus' ? '+' : '-');
+  this.handlerName_ = handlerName;
+};
+goog.inherits(Blockly.FieldOperatorButton, Blockly.FieldImage);
+Blockly.FieldOperatorButton.prototype.init = function() {
+  if (this.fieldGroup_) {
+    return;
+  }
+  Blockly.FieldOperatorButton.superClass_.init.call(this);
+  this.imageElement_.style.cursor = 'pointer';
+  this.mouseDownWrapper_ = Blockly.bindEventWithChecks_(
+    this.imageElement_, 'mousedown', this, this.onMouseDown_
+  );
+};
+Blockly.FieldOperatorButton.prototype.dispose = function() {
+  if (this.mouseDownWrapper_) {
+    Blockly.unbindEvent_(this.mouseDownWrapper_);
+    this.mouseDownWrapper_ = null;
+  }
+  Blockly.FieldOperatorButton.superClass_.dispose.call(this);
+};
+Blockly.FieldOperatorButton.prototype.onMouseDown_ = function(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  var block = this.sourceBlock_;
+  if (block && !block.isInFlyout && block.workspace && !block.workspace.options.readOnly && block[this.handlerName_]) {
+    block[this.handlerName_]();
   }
 };
 
-Blockly.Blocks['operator_multiply'] = {
-  /**
-   * Block for multiplying two numbers.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.jsonInit({
-      "message0": Blockly.Msg.OPERATORS_MULTIPLY,
-      "args0": [
-        {
-          "type": "input_value",
-          "name": "NUM1"
-        },
-        {
-          "type": "input_value",
-          "name": "NUM2"
+Blockly.ScratchBlocks.OperatorUtils.makeButtonIcon_ = function(plus) {
+  return 'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="18" viewBox="0 0 12 18">' +
+      '<path d="' + (plus ? 'M4 5 L9.5 9 L4 13 Z' : 'M8 5 L2.5 9 L8 13 Z') +
+      '" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '</svg>'
+    );
+};
+Blockly.ScratchBlocks.OperatorUtils.makeButtonField = function(plus) {
+  var icon = Blockly.ScratchBlocks.OperatorUtils.makeButtonIcon_(plus === 'plus');
+  return new Blockly.FieldOperatorButton(icon, plus);
+};
+Blockly.ScratchBlocks.OperatorUtils.attachShadow_ = function(input, shadowType) {
+  if (!shadowType) return;
+  var fieldName = shadowType === 'text' ? 'TEXT' : 'NUM';
+  Blockly.Events.disable();
+  try {
+    var block = this.workspace.newBlock(shadowType);
+    block.setFieldValue('', fieldName);
+    block.setShadow(true);
+    if (!this.isInsertionMarker()) {
+      block.initSvg();
+      block.render(false);
+    }
+  } finally {
+    Blockly.Events.enable();
+  }
+  if (Blockly.Events.isEnabled()) {
+    Blockly.Events.fire(new Blockly.Events.BlockCreate(block));
+  }
+  block.outputConnection.connect(input.connection);
+};
+
+Blockly.ScratchBlocks.OperatorUtils.MUTATOR_MIXIN = {
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    container.setAttribute('itemcount', this.itemCount_);
+    return container;
+  },
+  domToMutation: function(xmlElement) {
+    var count = parseInt(xmlElement.getAttribute('itemcount'), 10);
+    this.itemCount_ = Math.max(count, this.minItems_);
+    this.updateShape_();
+  },
+  mutationToDomText_: function() {
+    var dom = this.mutationToDom();
+    return dom ? Blockly.Xml.domToText(dom) : null;
+  },
+  fireMutationChange_: function(oldMutation) {
+    if (Blockly.Events.isEnabled()) {
+      Blockly.Events.fire(new Blockly.Events.BlockChange(
+        this, 'mutation', null, oldMutation, this.mutationToDomText_()
+      ));
+    }
+  },
+  plus: function() {
+    var oldMutation = this.mutationToDomText_();
+    this.itemCount_++;
+    this.updateShape_(true);
+    this.fireMutationChange_(oldMutation);
+  },
+  minus: function() {
+    if (this.itemCount_ <= this.minItems_) return;
+    var oldMutation = this.mutationToDomText_();
+    this.itemCount_--;
+    this.updateShape_(false);
+    this.fireMutationChange_(oldMutation);
+  },
+  addInput_: function(index, isNewlyAdded) {
+    var input = this.appendValueInput(this.inputPrefix_ + index);
+    if (this.inputCheck_) {
+      input.setCheck(this.inputCheck_);
+    }
+    if (index === 1 && this.prefixLabel_) {
+      var label = typeof this.prefixLabel_ === 'function' ? this.prefixLabel_() : this.prefixLabel_;
+      input.appendField(label, 'PREFIXLABEL');
+    } else if (index > 1 && this.separatorLabel_) {
+      var sep = typeof this.separatorLabel_ === 'function' ? this.separatorLabel_() : this.separatorLabel_;
+      input.appendField(sep, 'SEP' + index);
+    }
+    if (isNewlyAdded && this.shadowType_ && this.workspace && !this.isInsertionMarker()) {
+      Blockly.ScratchBlocks.OperatorUtils.attachShadow_.call(this, input, this.shadowType_);
+    }
+    return input;
+  },
+  removeInput_: function(index) {
+    var name = this.inputPrefix_ + index;
+    var input = this.getInput(name);
+    if (input) {
+      if (input.connection) {
+        var target = input.connection.targetBlock();
+        if (target && !target.isShadow()) {
+          input.connection.disconnect();
         }
-      ],
-      "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_number"]
+        var shadow = input.connection.targetBlock();
+        if (shadow && shadow.isShadow()) {
+          shadow.dispose();
+        }
+      }
+      this.removeInput(name);
+    }
+  },
+  updateShape_: function(isNewlyAdded) {
+    var rendered = this.rendered;
+    this.rendered = false;
+    var currentCount = 0;
+    while (this.getInput(this.inputPrefix_ + (currentCount + 1))) {
+      currentCount++;
+    }
+    if (this.getInput('BUTTONS')) {
+      this.removeInput('BUTTONS');
+    }
+    for (var i = currentCount + 1; i <= this.itemCount_; i++) {
+      this.addInput_(i, isNewlyAdded);
+    }
+    for (var i = currentCount; i > this.itemCount_; i--) {
+      this.removeInput_(i);
+    }
+    if (!Blockly.ScratchBlocks.OperatorUtils.arrowsHidden) {
+      var buttons = this.appendDummyInput('BUTTONS');
+      if (this.itemCount_ > this.minItems_) {
+        buttons.appendField(
+          Blockly.ScratchBlocks.OperatorUtils.makeButtonField('minus'), 'MINUS'
+        );
+      }
+      buttons.appendField(
+        Blockly.ScratchBlocks.OperatorUtils.makeButtonField('plus'), 'PLUS'
+      );
+    }
+    this.setInputsInline(true);
+    if (rendered && !this.isInsertionMarker()) {
+      this.initSvg();
+      this.render();
+    }
+  },
+  customContextMenu: function(options) {
+    if (this.isInFlyout) return;
+    var block = this;
+    options.push({
+      enabled: true,
+      text: Blockly.Msg.OPERATORS_ADD_INPUT || 'Add input',
+      callback: function() { block.plus(); }
     });
+    if (this.itemCount_ > this.minItems_) {
+      options.push({
+        enabled: true,
+        text: Blockly.Msg.OPERATORS_REMOVE_INPUT || 'Remove input',
+        callback: function() { block.minus(); }
+      });
+    }
   }
 };
 
-Blockly.Blocks['operator_divide'] = {
-  /**
-   * Block for dividing two numbers.
-   * @this Blockly.Block
-   */
-  init: function() {
-    this.jsonInit({
-      "message0": Blockly.Msg.OPERATORS_DIVIDE,
-      "args0": [
-        {
-          "type": "input_value",
-          "name": "NUM1"
-        },
-        {
-          "type": "input_value",
-          "name": "NUM2"
-        }
-      ],
-      "category": Blockly.Categories.operators,
-      "extensions": ["colours_operators", "output_number"]
-    });
+Blockly.ScratchBlocks.defineExtendableOperator = function(config) {
+  var definition = {
+    inputPrefix_: config.prefix,
+    separatorLabel_: config.separator || '',
+    prefixLabel_: config.prefixLabel || '',
+    inputCheck_: config.check || null,
+    shadowType_: config.shadow || null,
+    minItems_: config.minItems || 2,
+    init: function() {
+      this.itemCount_ = this.minItems_;
+      var extensions = [config.colour || 'colours_operators'];
+      if (config.output) extensions.push(config.output);
+      this.jsonInit({
+        'message0': '',
+        'category': config.category || Blockly.Categories.operators,
+        'extensions': extensions
+      });
+      if (config.output === null) {
+        this.setOutput(true, null);
+        this.setOutputShape(Blockly.OUTPUT_SHAPE_ROUND);
+      }
+      this.updateShape_();
+    }
+  };
+  for (var key in Blockly.ScratchBlocks.OperatorUtils.MUTATOR_MIXIN) {
+    definition[key] = Blockly.ScratchBlocks.OperatorUtils.MUTATOR_MIXIN[key];
   }
+  return definition;
 };
 
+Blockly.Blocks['operator_add'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', separator: '+', shadow: 'math_number', output: 'output_number'
+});
+Blockly.Blocks['operator_subtract'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', separator: '-', shadow: 'math_number', output: 'output_number'
+});
+Blockly.Blocks['operator_multiply'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', separator: '*', shadow: 'math_number', output: 'output_number'
+});
+Blockly.Blocks['operator_divide'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', separator: '/', shadow: 'math_number', output: 'output_number'
+});
 Blockly.Blocks['operator_min'] = Blockly.ScratchBlocks.defineExtendableOperator({
   prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MIN || 'min'; },
   shadow: 'math_number', output: 'output_number'
