@@ -209,6 +209,9 @@ Blockly.Msg.OPERATORS_LETTEROF_APPLE = 'a';
 Blockly.Msg.OPERATORS_LENGTH = 'length of %1';
 Blockly.Msg.OPERATORS_CONTAINS = '%1 contains %2?';
 Blockly.Msg.OPERATORS_MOD = '%1 mod %2';
+Blockly.Msg.OPERATORS_MIN = 'min';
+Blockly.Msg.OPERATORS_MAX = 'max';
+Blockly.Msg.OPERATORS_CLAMP = 'clamp %1 between %2 and %3';
 Blockly.Msg.OPERATORS_PI = 'pi';
 Blockly.Msg.OPERATORS_NEWLINE = 'newline';
 Blockly.Msg.OPERATORS_ROUND = 'round %1';
@@ -282,6 +285,8 @@ Blockly.Msg.SENSING_DAYSSINCE2000 = 'days since 2000';
 Blockly.Msg.SENSING_ONLINE = 'online?';
 Blockly.Msg.SENSING_USERNAME = 'username';
 Blockly.Msg.SENSING_USERID = 'user id';
+Blockly.Msg.SENSING_STAGEWIDTH = 'stage width';
+Blockly.Msg.SENSING_STAGEHEIGHT = 'stage height';
 
 // Sound blocks
 Blockly.Msg.SOUND_PLAY = 'start sound %1';

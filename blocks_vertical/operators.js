@@ -124,6 +124,31 @@ Blockly.Blocks['operator_divide'] = {
   }
 };
 
+Blockly.Blocks['operator_min'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MIN || 'min'; },
+  shadow: 'math_number', output: 'output_number'
+});
+
+Blockly.Blocks['operator_max'] = Blockly.ScratchBlocks.defineExtendableOperator({
+  prefix: 'NUM', prefixLabel: function() { return Blockly.Msg.OPERATORS_MAX || 'max'; },
+  shadow: 'math_number', output: 'output_number'
+});
+
+Blockly.Blocks['operator_clamp'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.OPERATORS_CLAMP,
+      "args0": [
+        {"type": "input_value", "name": "NUM"},
+        {"type": "input_value", "name": "MIN"},
+        {"type": "input_value", "name": "MAX"}
+      ],
+      "category": Blockly.Categories.operators,
+      "extensions": ["colours_operators", "output_number"]
+    });
+  }
+};
+
 Blockly.Blocks['operator_random'] = {
   /**
    * Block for picking a random number.

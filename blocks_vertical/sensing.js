@@ -404,6 +404,26 @@ Blockly.Blocks['sensing_resettimer'] = {
   }
 };
 
+Blockly.Blocks['sensing_stagewidth'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_STAGEWIDTH,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_stageheight'] = {
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_STAGEHEIGHT,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
 Blockly.Blocks['sensing_of_object_menu'] = {
   /**
    * "* of _" object menu.
