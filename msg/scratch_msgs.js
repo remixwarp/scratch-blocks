@@ -528,7 +528,7 @@ Blockly.ScratchMsgs.locales["zh-cn"] =
     "OPERATORS_LENGTH": "%1 的字符数",
     "OPERATORS_CONTAINS": "%1 包含 %2 ?",
     "OPERATORS_MOD": "%1 除以 %2 的余数",
-    "OPERATORS_MOD_SEPARATOR": "mod",
+    "OPERATORS_MOD_SEPARATOR": "取余",
     "OPERATORS_MIN": "最小值",
     "OPERATORS_MAX": "最大值",
     "OPERATORS_CLAMP": "将 %1 限制在 %2 和 %3 之间",
