@@ -186,21 +186,29 @@ Blockly.DropDownDiv.setCategory = function(category) {
 Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     opt_onHide, opt_secondaryYOffset) {
   var scale = block.workspace.scale;
-  var bBox = {width: block.width, height: block.height};
-  bBox.width *= scale;
-  bBox.height *= scale;
-  var position = block.getSvgRoot().getBoundingClientRect();
-  // If we can fit it, render below the block.
-  var primaryX = position.left + bBox.width / 2;
-  var primaryY = position.top + bBox.height;
-  // If we can't fit it, render above the entire parent block.
+  // 原来用 block.getSvgRoot().getBoundingClientRect() 获取 block 的视口坐标。
+  // 多工作区（remixwarp 的竖向/横向拆分）场景下，独立的 workspace 有各自的
+  // translate(scrollX, scrollY) 与 scale，祖先 transform 叠加可能让
+  // getBoundingClientRect 返回错误的视口偏移，导致弹出框位置严重错位
+  // （左工作区弹出框偏到右工作区，上工作区偏到下工作区）。
+  //
+  // 修复：改用 block 的 workspace 内部坐标 + 容器的视口坐标叠加，
+  // 避开祖先 transform 的干扰，得到确定且正确的屏幕坐标。
+  var container = block.workspace.getParentSvg().parentNode;
+  var containerRect = container.getBoundingClientRect();
+  var blockXY = block.getRelativeToSurfaceXY();
+  var primaryX = containerRect.left +
+      (blockXY.x + block.width / 2) * scale;
+  var primaryY = containerRect.top +
+      (blockXY.y + block.height) * scale;
+  // 如果我们能容纳它，则渲染在 block 下方；否则渲染在上方。
   var secondaryX = primaryX;
-  var secondaryY = position.top;
+  var secondaryY = containerRect.top + blockXY.y * scale;
   if (opt_secondaryYOffset) {
     secondaryY += opt_secondaryYOffset;
   }
   // Set bounds to workspace; show the drop-down.
-  Blockly.DropDownDiv.setBoundsElement(block.workspace.getParentSvg().parentNode);
+  Blockly.DropDownDiv.setBoundsElement(container);
   return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
 };
 
