@@ -185,33 +185,45 @@ Blockly.DropDownDiv.setCategory = function(category) {
  */
 Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     opt_onHide, opt_secondaryYOffset) {
+  // remixwarp 多工作区修复：
+  // 原代码用 block.getSvgRoot().getBoundingClientRect() 获取视口坐标，
+  // 在多工作区场景下（各自 translate/scale 祖先 transform 叠加）可能返回
+  // 错误偏移。改为 block.getRelativeToSurfaceXY()（workspace 内部坐标）
+  // 叠加 workspace 容器视口坐标，避开祖先 transform 干扰。
+  // 加 try-catch 保底，异常时回退原逻辑，避免整个弹窗失效。
   var scale = block.workspace.scale;
-  // 原来用 block.getSvgRoot().getBoundingClientRect() 获取 block 的视口坐标。
-  // 多工作区（remixwarp 的竖向/横向拆分）场景下，独立的 workspace 有各自的
-  // translate(scrollX, scrollY) 与 scale，祖先 transform 叠加可能让
-  // getBoundingClientRect 返回错误的视口偏移，导致弹出框位置严重错位
-  // （左工作区弹出框偏到右工作区，上工作区偏到下工作区）。
-  //
-  // 修复：改用 block 的 workspace 内部坐标 + 容器的视口坐标叠加，
-  // 避开祖先 transform 的干扰，得到确定且正确的屏幕坐标。
+  var bBox = {width: block.width, height: block.height};
+  bBox.width *= scale;
+  bBox.height *= scale;
   var container = block.workspace.getParentSvg().parentNode;
-  var containerRect = container.getBoundingClientRect();
-  var blockXY = block.getRelativeToSurfaceXY();
-  var primaryX = containerRect.left +
-      (blockXY.x + block.width / 2) * scale;
-  var primaryY = containerRect.top +
-      (blockXY.y + block.height) * scale;
-  // 如果我们能容纳它，则渲染在 block 下方；否则渲染在上方。
-  var secondaryX = primaryX;
-  var secondaryY = containerRect.top + blockXY.y * scale;
-  if (opt_secondaryYOffset) {
-    secondaryY += opt_secondaryYOffset;
+  var position;
+  try {
+    position = container.getBoundingClientRect();
+    var blockXY = block.getRelativeToSurfaceXY();
+    var primaryX = position.left + (blockXY.x + block.width / 2) * scale;
+    var primaryY = position.top + (blockXY.y + block.height) * scale;
+    var secondaryX = primaryX;
+    var secondaryY = position.top + blockXY.y * scale;
+    if (opt_secondaryYOffset) {
+      secondaryY += opt_secondaryYOffset;
+    }
+    Blockly.DropDownDiv.setBoundsElement(container);
+    return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
+  } catch (e) {
+    console.warn('[DropDownDiv] remixwarp multi-workspace path failed, fallback to original:', e.message);
+    // 回退到原始逻辑
+    position = block.getSvgRoot().getBoundingClientRect();
+    var primaryX = position.left + bBox.width / 2;
+    var primaryY = position.top + bBox.height;
+    var secondaryX = primaryX;
+    var secondaryY = position.top;
+    if (opt_secondaryYOffset) {
+      secondaryY += opt_secondaryYOffset;
+    }
+    Blockly.DropDownDiv.setBoundsElement(container);
+    return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
   }
-  // Set bounds to workspace; show the drop-down.
-  Blockly.DropDownDiv.setBoundsElement(container);
-  return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
 };
-
 /**
  * Show and place the drop-down.
  * The drop-down is placed with an absolute "origin point" (x, y) - i.e.,
