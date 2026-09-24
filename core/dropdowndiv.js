@@ -195,9 +195,13 @@ Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
   var bBox = {width: block.width, height: block.height};
   bBox.width *= scale;
   bBox.height *= scale;
-  var container = block.workspace.getParentSvg().parentNode;
+  var boundsContainer = null;
   var position;
   try {
+    // 注意：container 取 DOM 也可能抛错（如 block 所在 workspace 尚未挂载
+    // getParentSvg() 或 parentNode 为 null），必须放进 try 里统一捕获。
+    var container = block.workspace.getParentSvg().parentNode;
+    boundsContainer = container;
     position = container.getBoundingClientRect();
     var blockXY = block.getRelativeToSurfaceXY();
     var primaryX = position.left + (blockXY.x + block.width / 2) * scale;
@@ -211,7 +215,7 @@ Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
   } catch (e) {
     console.warn('[DropDownDiv] remixwarp multi-workspace path failed, fallback to original:', e.message);
-    // 回退到原始逻辑
+    // 回退到原始逻辑（只在 block.getSvgRoot() 上取 bounding rect）
     position = block.getSvgRoot().getBoundingClientRect();
     var primaryX = position.left + bBox.width / 2;
     var primaryY = position.top + bBox.height;
@@ -220,7 +224,8 @@ Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     if (opt_secondaryYOffset) {
       secondaryY += opt_secondaryYOffset;
     }
-    Blockly.DropDownDiv.setBoundsElement(container);
+    Blockly.DropDownDiv.setBoundsElement(
+        boundsContainer || block.getSvgRoot().parentNode || document.body);
     return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
   }
 };
