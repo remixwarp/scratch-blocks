@@ -185,30 +185,47 @@ Blockly.DropDownDiv.setCategory = function(category) {
  */
 Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     opt_onHide, opt_secondaryYOffset) {
-  // remixwarp 定位修复 v3：
-  // 直接用积木自身 SVG 根节点的 getBoundingClientRect() 取视口坐标。
-  // 它会自动包含所有祖先 transform —— 包括多工作区场景下工作区容器上的
-  // CSS transform（缩放/位移）。而 getScreenCTM() 不含 HTML 祖先的 CSS transform，
-  // 在分屏/多工作区时会偏移。该方式在单/多工作区、缩放/平移下均正确。
+  // remixwarp 定位修复 v2：
+  // 旧公式 containerRect.left + (blockXY.x + w/2) * scale 混淆了坐标系：
+  // getRelativeToSurfaceXY() 返回的是画布内工作区坐标（不含画布平移/缩放），
+  // 旧公式却把画布平移一起乘了 scale，且缺少 SVG 原点换算，
+  // 因此工作区平移/缩放非零时气泡会飘到别处（如 π 返回值弹窗）。
+  // 现改用 SVG CTM 将工作区坐标精确映射到视口坐标（自动涵盖 pan/scale/
+  // 所有祖先 transform），多工作区场景同样正确。异常时回退原逻辑。
+  var scale = block.workspace.scale;
+  var bBox = {width: block.width, height: block.height};
+  bBox.width *= scale;
+  bBox.height *= scale;
+  var boundsContainer = null;
   try {
-    var boundsContainer = block.workspace.getParentSvg().parentNode;
-    var position = block.getSvgRoot().getBoundingClientRect();
-    var primaryX = position.left + position.width / 2;
-    var primaryY = position.top + position.height;
-    var secondaryX = primaryX;
-    var secondaryY = position.top;
+    var svg = block.workspace.getParentSvg();
+    boundsContainer = svg.parentNode;
+    var blockXY = block.getRelativeToSurfaceXY();
+    var screenCtm = svg.getScreenCTM();
+    var canvasCtm = block.workspace.getCanvas().getCTM();
+    if (!screenCtm || !canvasCtm) {
+      throw new Error('CTM unavailable');
+    }
+    var point = svg.createSVGPoint();
+    // primary：积木底部中心（默认在下方弹出）
+    point.x = blockXY.x + block.width / 2;
+    point.y = blockXY.y + block.height;
+    var primary = point.matrixTransform(canvasCtm).matrixTransform(screenCtm);
+    // secondary：积木顶部中心（放不下时改在上方弹出）
+    point.y = blockXY.y;
+    var secondary = point.matrixTransform(canvasCtm).matrixTransform(screenCtm);
+    var primaryX = primary.x;
+    var primaryY = primary.y;
+    var secondaryX = secondary.x;
+    var secondaryY = secondary.y;
     if (opt_secondaryYOffset) {
       secondaryY += opt_secondaryYOffset;
     }
     Blockly.DropDownDiv.setBoundsElement(boundsContainer);
     return Blockly.DropDownDiv.show(this, primaryX, primaryY, secondaryX, secondaryY, opt_onHide);
   } catch (e) {
-    console.warn('[DropDownDiv] remixwarp rect path failed, fallback to original:', e.message);
+    console.warn('[DropDownDiv] remixwarp CTM path failed, fallback to original:', e.message);
     // 回退到原始逻辑（只在 block.getSvgRoot() 上取 bounding rect）
-    var scale = block.workspace.scale;
-    var bBox = {width: block.width, height: block.height};
-    bBox.width *= scale;
-    bBox.height *= scale;
     var position = block.getSvgRoot().getBoundingClientRect();
     var primaryX = position.left + bBox.width / 2;
     var primaryY = position.top + bBox.height;
