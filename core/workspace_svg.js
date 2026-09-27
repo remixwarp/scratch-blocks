@@ -478,7 +478,10 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     }
   }
 
-  this.intersectionObserver = new Blockly.IntersectionObserver(this);
+  // 仅对非 flyout（积木面板）工作区启用屏外积木懒剔除，避免面板积木被误隐藏。
+  if (!this.isFlyout) {
+    this.intersectionObserver = new Blockly.IntersectionObserver(this);
+  }
 
   // Determine if there needs to be a category tree, or a simple list of
   // blocks.  This cannot be changed later, since the UI is very different.
@@ -690,6 +693,9 @@ Blockly.WorkspaceSvg.prototype.resizeContents = function() {
     this.scrollbar.resize();
   }
   this.updateInverseScreenCTM();
+  // 内容变化（含初始加载大量积木）后立刻触发一次屏外剔除，避免大作品打开瞬间
+  // 全量渲染导致卡顿；queueIntersectionCheck 内部已做去重与空值守卫。
+  this.queueIntersectionCheck();
 };
 
 Blockly.WorkspaceSvg.prototype.queueIntersectionCheck = function() {

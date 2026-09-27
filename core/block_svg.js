@@ -308,6 +308,11 @@ Blockly.BlockSvg.prototype.updateIntersectionObserver = function() {
       this.workspace.intersectionObserver.observe(this);
     }
   }
+  // 每次积木挂载 / 渲染后排队一次剔除检查（微任务去重），保证初始加载与编辑
+  // 后屏外积木能被及时剔除；flyout 工作区无 intersectionObserver，调用为空操作。
+  if (this.workspace.queueIntersectionCheck) {
+    this.workspace.queueIntersectionCheck();
+  }
 };
 
 /**
